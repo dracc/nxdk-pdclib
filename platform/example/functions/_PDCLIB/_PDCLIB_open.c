@@ -17,6 +17,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#ifdef __ANDROID__
+/* Getting the sigset_t typedef for Termux */
+#include <bits/signal_types.h>
+#endif
 #include <unistd.h>
 
 #include "/usr/include/errno.h"
@@ -89,6 +93,7 @@ int main( void )
     TESTCASE( _PDCLIB_open( testfile, _PDCLIB_FREAD ) == _PDCLIB_NOHANDLE );
     /* Writing to file, trying to read from it. */
     TESTCASE( ( fh = _PDCLIB_open( testfile, _PDCLIB_FWRITE ) ) != _PDCLIB_NOHANDLE );
+    puts( strerror( errno ) );
     TESTCASE( write( fh, "test", 4 ) == 4 );
     TESTCASE( lseek( fh, 0, SEEK_SET ) == 0 );
     TESTCASE( read( fh, buffer, 4 ) == -1 );
